@@ -5,7 +5,7 @@
 * Put *airline-0.0.1-SNAPSHOT.jar* to desired folder.
 * Open console and go to the desired folder. 
 * Run application using command:
-  **java -jar airline-0.0.1-SNAPSHOT.jar**
+  **java -cp airline-0.0.1-SNAPSHOT.jar com.tvorobiova.console.ConsoleMenu**
 
 * After starting application loads random number of aircraft into airline. 
 * User can use option **1** to see all aircraft .
