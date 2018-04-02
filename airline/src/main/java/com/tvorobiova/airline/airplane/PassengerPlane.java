@@ -1,42 +1,34 @@
 package com.tvorobiova.airline.airplane;
 
+import static java.util.Objects.requireNonNull;
+
 import com.tvorobiova.airline.airplane.fueltank.FuelTank;
-import com.tvorobiova.airline.airplane.passenger.PassengerLaunge;
+import com.tvorobiova.airline.airplane.passenger.PassengerLounge;
+import com.tvorobiova.airline.airplane.storage.Storage;
 
-public class PassengerPlane extends HeavyPlane {
+public class PassengerPlane extends Plane {
 
-	private PassengerLaunge launge;
+	private PassengerLounge lounge;
 
-	public PassengerPlane(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank) {
-		super(aircraftId, aircraftWeight, flightRange, fuelTank);
+	public PassengerPlane(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank,
+			Storage storage, PassengerLounge lounge) {
+		super(aircraftId, aircraftWeight, flightRange, fuelTank, storage);
+		requireNonNull(lounge);
+		this.lounge = lounge;
 	}
 
-	public double countMaxTotalCapacity() {
-		return countMaxCarriageCapacity() + fuelTank.countMaxFuelCapacity() + aircraftWeight;
-	}
-
+	@Override
 	public double countMaxCarriageCapacity() {
-		return storage.getMaxWeightCapacity() + launge.countMaxCarriageCapacity();
+		return super.countMaxCarriageCapacity() + lounge.countMaxCarriageCapacity();
 	}
 
-	public double countCurrentTotalCapacity() {
-		return countCurrentCarriageCapacity() + fuelTank.countCurrentFuelCapacity() + aircraftWeight;
-	}
-
+	@Override
 	public double countCurrentCarriageCapacity() {
-		return storage.countTotalCapacity() + launge.countTotalCapacity();
+		return super.countCurrentCarriageCapacity() + lounge.countTotalCapacity();
 	}
 
-	public PassengerLaunge getLaunge() {
-		return launge;
-	}
-
-	public void setLaunge(PassengerLaunge launge) {
-		if (this.launge == null) {
-			this.launge = launge;
-		} else {
-			System.out.println("Passenger launge has been already added");
-		}
+	public PassengerLounge getLounge() {
+		return lounge;
 	}
 
 }

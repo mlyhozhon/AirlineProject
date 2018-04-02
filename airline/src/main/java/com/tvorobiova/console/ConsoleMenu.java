@@ -8,7 +8,8 @@ public class ConsoleMenu {
 		int keyValue;
 		AirlineLoader loader = AirlineLoader.getInstance();
 		Airline airline = loader.loadDefaultAirline();
-		while (true) {
+    boolean exit = false;
+		while (!exit) {
 			System.out.println("==================================");
 			System.out.println("|              MENU              |");
 			System.out.println("==================================");
@@ -46,7 +47,7 @@ public class ConsoleMenu {
 				break;
 			case 6:
 				System.out.println("Thanks for using our application. Good luck!");
-				System.exit(0);
+				exit = true;
 				break;
 			default:
 				System.out.println("Invalid selection");

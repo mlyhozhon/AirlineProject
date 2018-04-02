@@ -2,13 +2,14 @@ package com.tvorobiova.airline.airplane.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Storage {
 
 	private final int maxWeightCapacity;
 	private final int maxVolumeCapacity;
 
-	private List<Cargo> cargoList;
+	private List<Cargo> cargoList = new ArrayList<>();
 
 	public Storage(int maxWeightCapacity, int maxVolumeCapacity) {
 		this.maxWeightCapacity = maxWeightCapacity;
@@ -16,21 +17,11 @@ public class Storage {
 	}
 
 	public boolean loadCargo(Cargo cargo) {
-		if (cargoList == null) {
-			cargoList = new ArrayList<Cargo>();
-		}
-		if (isValidForLoading(cargo)) {
-			cargoList.add(cargo);
-			return true;
-		}
-		return false;
+		return isValidForLoading(cargo) && cargoList.add(cargo);
 	}
 
 	public boolean removeCargo(Cargo cargo) {
-		if (cargoList != null) {
-			return cargoList.remove(cargo);
-		}
-		return false;
+		return cargoList.remove(cargo);
 	}
 
 	private int calculateTotalVolume() {
@@ -42,13 +33,10 @@ public class Storage {
 	}
 
 	public int countTotalCapacity() {
-		int totalCapacity = 0;
-		if (cargoList != null) {
-			for (Cargo cargo : cargoList) {
-				totalCapacity += cargo != null ? cargo.getWeight() : 0;
-			}
-		}
-		return totalCapacity;
+		return cargoList.stream()
+				.filter(Objects::nonNull)
+				.map(Cargo::getWeight)
+				.reduce(0, Integer::sum);
 	}
 
 	private boolean isValidForLoading(Cargo cargo) {

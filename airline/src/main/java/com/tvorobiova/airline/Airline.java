@@ -1,29 +1,32 @@
 package com.tvorobiova.airline;
 
+import com.tvorobiova.airline.airplane.Aircraft;
+import com.tvorobiova.airline.airplane.Plane;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.tvorobiova.airline.airplane.Aircraft;
-import com.tvorobiova.airline.airplane.HeavyPlane;
 
 public class Airline {
 
 	private List<Aircraft> airplanes = new ArrayList<>();
 
 	public double calculateTotalCapacity() {
-		return airplanes.stream().map(plane -> plane.countMaxTotalCapacity()).reduce(0.0, Double::sum);
+		return airplanes.stream()
+				.map(Aircraft::countMaxTotalCapacity)
+				.reduce(0.0, Double::sum);
 	}
 
 	public double calculateCarryingCapacity() {
-		return airplanes.stream().filter(plane -> plane instanceof HeavyPlane)
-				.map(plane -> ((HeavyPlane) plane).countMaxCarriageCapacity()).reduce(0.0, Double::sum);
+		return airplanes.stream()
+				.filter(plane -> plane instanceof Plane)
+				.map(plane -> ((Plane) plane).countMaxCarriageCapacity())
+				.reduce(0.0, Double::sum);
 	}
 
 	public double calculateCurrentCapacity(){
-		return airplanes.stream().map(plane -> plane.countCurrentTotalCapacity()).reduce(0.0, Double::sum);
+		return airplanes.stream()
+				.map(Aircraft::countCurrentTotalCapacity)
+				.reduce(0.0, Double::sum);
 	}
 	
 	public boolean addAircraft(Aircraft aircraft) {
@@ -35,19 +38,19 @@ public class Airline {
 	}
 
 	public void printAllAircrafts() {
-		Collections.sort(airplanes, (a1, a2) -> a1.compareTo(a2));
-		airplanes.stream().map(plane -> "Aircraft ID: " + plane.getAircraftId() + "     Flight Range: " + plane.getFlightRange() + " kg    Fuel Consumption: " + plane.getFuelConsumtion() + " lit/hour ")
-				.collect(Collectors.toList()).forEach(System.out::println);
+		airplanes.sort(Aircraft::compareTo);
+		airplanes.stream()
+				.map(Aircraft::toString)
+				.forEach(System.out::println);
 	}
 
 	public void find(int fuelConsumptionStart, int fuelConsumptionEnd) {
 
 		airplanes.stream()
-				.filter(plane -> plane.getFuelConsumtion() >= fuelConsumptionStart
-						&& plane.getFuelConsumtion() <= fuelConsumptionEnd)
-				.collect(Collectors.toSet()).stream()
+				.filter(plane -> plane.getFuelConsumption() >= fuelConsumptionStart
+						&& plane.getFuelConsumption() <= fuelConsumptionEnd)
 				.map(filteredPlane -> "Aircraft ID: " + filteredPlane.getAircraftId())
-				.collect(Collectors.toSet()).forEach(System.out::println);
+				.forEach(System.out::println);
 	}
 
 	public List<Aircraft> getAirplanes() {

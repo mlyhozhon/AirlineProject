@@ -1,5 +1,7 @@
 package com.tvorobiova.airline.airplane.passenger;
 
+import static java.util.Objects.nonNull;
+
 public class Seat {
 	private String seatNumber;
 	private Passenger passenger;
@@ -7,6 +9,7 @@ public class Seat {
 	public Seat(String seatNumber) {
 		this.seatNumber = seatNumber;
 	}
+
 	public String getSeatNumber() {
 		return seatNumber;
 	}
@@ -20,15 +23,15 @@ public class Seat {
 	}
 
 	public boolean putPassenger(Passenger passenger) {
-		if (!isEmpty()) {
+		if (isNotEmpty()) {
 			this.passenger = passenger;
 			return true;
 		}
 		return false;
 	}
 
-	public boolean isEmpty() {
-		return passenger == null;
+	public boolean isNotEmpty() {
+		return nonNull(passenger);
 	}
 
 }

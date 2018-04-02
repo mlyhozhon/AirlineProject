@@ -1,36 +1,43 @@
 package com.tvorobiova.airline.airplane;
 
 import com.tvorobiova.airline.airplane.fueltank.FuelTank;
+import java.util.Objects;
 
 public abstract class Aircraft implements Comparable<Aircraft>{
 
-	protected final int aircraftWeight;
-	protected final FuelTank fuelTank;
-	protected final String aircraftId;
-	
-	protected double fuelConsumtion;
-	protected Integer flightRange;
-	
-	protected Aircraft(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank) {
+	private final int aircraftWeight;
+	private FuelTank fuelTank;
+	private final String aircraftId;
+	private double fuelConsumption;
+	private Integer flightRange;
+
+	Aircraft(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank) {
 		this.aircraftWeight = aircraftWeight;
 		this.fuelTank = fuelTank;
 		this.aircraftId = aircraftId;
 		this.flightRange = flightRange;
 	}
 
-	public abstract double countMaxTotalCapacity();
-	public abstract double countCurrentTotalCapacity();
-	
+	public abstract double countMaxCarriageCapacity();
 
+	public abstract double countCurrentCarriageCapacity();
 
-	public double getFuelConsumtion() {
-		return fuelConsumtion;
+	public double countMaxTotalCapacity() {
+		return fuelTank.countMaxFuelCapacity() + aircraftWeight + countMaxCarriageCapacity();
 	}
 
-	public void setFuelConsumtion(double fuelConsumtion) {
-		this.fuelConsumtion = fuelConsumtion;
+	public double countCurrentTotalCapacity() {
+		return fuelTank.countCurrentFuelCapacity() + aircraftWeight + countCurrentCarriageCapacity();
 	}
-	
+
+	public double getFuelConsumption() {
+		return fuelConsumption;
+	}
+
+	public void setFuelConsumption(double fuelConsumption) {
+		this.fuelConsumption = fuelConsumption;
+	}
+
 	public int getFlightRange() {
 		return flightRange;
 	}
@@ -50,34 +57,24 @@ public abstract class Aircraft implements Comparable<Aircraft>{
 
 	@Override
 	public String toString() {
-		return "Aircraft [Aircraft ID: " + aircraftId + ", fuelConsumtion=" + fuelConsumtion + ", flightRange="
+		return "Aircraft [Aircraft ID: " + aircraftId + ", fuelConsumption=" + fuelConsumption + ", flightRange="
 				+ flightRange + "]";
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((aircraftId == null) ? 0 : aircraftId.hashCode());
-		return result;
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Aircraft aircraft = (Aircraft) o;
+		return Objects.equals(aircraftId, aircraft.aircraftId);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Aircraft other = (Aircraft) obj;
-		if (aircraftId == null) {
-			if (other.aircraftId != null)
-				return false;
-		} else if (!aircraftId.equals(other.aircraftId))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hash(aircraftId);
 	}
-
-	
 }

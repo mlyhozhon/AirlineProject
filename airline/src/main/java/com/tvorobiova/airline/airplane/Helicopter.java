@@ -1,30 +1,36 @@
 package com.tvorobiova.airline.airplane;
 
+import static java.util.Objects.requireNonNull;
+
 import com.tvorobiova.airline.airplane.fueltank.FuelTank;
-import com.tvorobiova.airline.airplane.passenger.PassengerLaunge;
+import com.tvorobiova.airline.airplane.passenger.PassengerLounge;
 
 public class Helicopter extends Aircraft {
 
-	public Helicopter(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank) {
+	private PassengerLounge lounge;
+
+	public Helicopter(String aircraftId, int aircraftWeight, int flightRange, FuelTank fuelTank, PassengerLounge lounge) {
 		super(aircraftId, aircraftWeight, flightRange, fuelTank);
+		requireNonNull(lounge);
+		this.lounge = lounge;
 	}
 
-	private PassengerLaunge launge;
-
-	public double countMaxTotalCapacity() {
-		return fuelTank.countMaxFuelCapacity() + aircraftWeight;
-	}
-	
-	public double countCurrentTotalCapacity() {
-		return fuelTank.countCurrentFuelCapacity() + aircraftWeight;
+	@Override
+	public double countMaxCarriageCapacity() {
+		return lounge.countMaxCarriageCapacity();
 	}
 
-	public PassengerLaunge getLaunge() {
-		return launge;
+	@Override
+	public double countCurrentCarriageCapacity() {
+		return lounge.countTotalCapacity();
 	}
 
-	public void setLaunge(PassengerLaunge launge) {
-		this.launge = launge;
+	public PassengerLounge getLounge() {
+		return lounge;
+	}
+
+	public void setLounge(PassengerLounge lounge) {
+		this.lounge = lounge;
 	}
 
 

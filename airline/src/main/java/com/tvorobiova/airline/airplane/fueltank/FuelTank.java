@@ -1,19 +1,19 @@
 package com.tvorobiova.airline.airplane.fueltank;
 
 public class FuelTank {
-	public final static double FUEL_DENSITY = 0.8;
-	private final int maxVolume;
-	public int currentVolume;
 
+	private static final double FUEL_DENSITY = 0.8;
+	private final int maxVolume;
+	private int currentVolume;
 
 	public FuelTank(int maxVolume) {
 		this.maxVolume = maxVolume;
 	}
-	
+
 	public double countCurrentFuelCapacity() {
 		return currentVolume * FUEL_DENSITY;
 	}
-	
+
 	public double countMaxFuelCapacity() {
 		return maxVolume*FUEL_DENSITY;
 	}
@@ -29,6 +29,6 @@ public class FuelTank {
 	public int getMaxVolume() {
 		return maxVolume;
 	}
-	
-	
+
+
 }

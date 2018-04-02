@@ -15,12 +15,15 @@ public class Cargo {
 	public int getVolume() {
 		return volume;
 	}
+
 	public void setVolume(int volume) {
 		this.volume = volume;
 	}
+
 	public int getWeight() {
 		return weight;
 	}
+
 	public void setWeightCapacity(int weight) {
 		this.weight = weight;
 	}

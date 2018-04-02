@@ -1,30 +1,28 @@
 package com.tvorobiova.console;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.IntStream.range;
+
+import com.tvorobiova.airline.Airline;
+import com.tvorobiova.airline.airplane.Aircraft;
+import com.tvorobiova.airline.airplane.Helicopter;
+import com.tvorobiova.airline.airplane.PassengerPlane;
+import com.tvorobiova.airline.airplane.Plane;
+import com.tvorobiova.airline.airplane.fueltank.FuelTank;
+import com.tvorobiova.airline.airplane.passenger.PassengerLounge;
+import com.tvorobiova.airline.airplane.passenger.Seat;
+import com.tvorobiova.airline.airplane.storage.Storage;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import com.tvorobiova.airline.Airline;
-import com.tvorobiova.airline.airplane.Aircraft;
-import com.tvorobiova.airline.airplane.CargoAirplane;
-import com.tvorobiova.airline.airplane.Helicopter;
-import com.tvorobiova.airline.airplane.PassengerPlane;
-import com.tvorobiova.airline.airplane.fueltank.FuelTank;
-import com.tvorobiova.airline.airplane.passenger.PassengerLaunge;
-import com.tvorobiova.airline.airplane.passenger.Seat;
-import com.tvorobiova.airline.airplane.storage.Storage;
-
 public class AirlineLoader {
 	private static final Random numberCreator = new Random();
-	private static final int MIN_WEIGHT = 100;
-	private static final int MAX_CAPACITY = 100;
-	private static final int MAX_WEIGHT = 100500;
-	private static final int MAX_RANGE = 100500;
-	private static final int MIN_RANGE = 100;
 	private static final AirlineLoader instance = new AirlineLoader();
-	
+
 	 private AirlineLoader() {
-		 
+
 	}
 	 public static AirlineLoader getInstance() {
 		 return instance;
@@ -33,68 +31,79 @@ public class AirlineLoader {
 	// planes and Cargo planes
 	public Airline loadDefaultAirline() {
 		Airline airline = new Airline();
-		airline.addAircraft(createHelicoptes());
-		airline.addAircraft(createCargoPlanes());
-		airline.addAircraft(createPassengerPlanes());
+		for (AircraftCreator creator: asList(new HelicopterCreator(), new PlaneCreator(), new PassengerPlaneCreator())) {
+			airline.addAircraft(createAircrafts(creator));
+		}
 		return airline;
 	}
 
-	private Set<Aircraft> createHelicoptes() {
-		Set<Aircraft> helicopters = new HashSet<>();
-		int helicoperCount = numberCreator.nextInt(10);
-		for (int i = 0; i < helicoperCount; i++) {
-			Helicopter helicopter = new Helicopter("HH" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT, numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
-					createFuelTank());
-			helicopter.setFuelConsumtion(numberCreator.nextInt(MAX_CAPACITY)+1);
-			helicopters.add(helicopter);
-		}
-		return helicopters;
+	private Set<Aircraft> createAircrafts(AircraftCreator creator) {
+		return range(0, numberCreator.nextInt(10))
+				.mapToObj(creator::create)
+				.collect(toSet());
 	}
+}
 
-	private Set<Aircraft> createCargoPlanes() {
-		Set<Aircraft> planes = new HashSet<>();
-		int planesCount = numberCreator.nextInt(10);
-		for (int i = 0; i < planesCount; i++) {
-			CargoAirplane plane = new CargoAirplane("CC" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT, numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
-					createFuelTank());
-			plane.setStorage(createStorage());
-			plane.setFuelConsumtion(numberCreator.nextInt(MAX_CAPACITY)+1);
-			planes.add(plane);
-		}
-		return planes;
-	}
+abstract class AircraftCreator {
+	static final Random numberCreator = new Random();
+	static final int MIN_WEIGHT = 100;
+	static final int MAX_CAPACITY = 100;
+	static final int MAX_WEIGHT = 100500;
+	static final int MAX_RANGE = 100500;
+	static final int MIN_RANGE = 100;
 
-	private Set<Aircraft> createPassengerPlanes() {
-		Set<Aircraft> planes = new HashSet<>();
-		int planesCount = numberCreator.nextInt(10);
-		for (int i = 0; i < planesCount; i++) {
-			PassengerPlane plane = new PassengerPlane("PP" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT,numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
-					createFuelTank());
-			plane.setStorage(createStorage());
-			plane.setLaunge(createPassengerLaunge());
-			plane.setFuelConsumtion(numberCreator.nextInt(MAX_CAPACITY)+1);
-			planes.add(plane);
-		}
-		return planes;
-	}
+	public abstract Aircraft create(int i);
 
-	private FuelTank createFuelTank() {
+	FuelTank createFuelTank() {
 		return new FuelTank(numberCreator.nextInt(MAX_CAPACITY) + MIN_WEIGHT);
 	}
 
-	private Storage createStorage() {
+	Storage createStorage() {
 		return new Storage(numberCreator.nextInt(MAX_CAPACITY), numberCreator.nextInt());
 	}
 
-	private PassengerLaunge createPassengerLaunge() {
-		return new PassengerLaunge(createSeats(numberCreator.nextInt(MAX_CAPACITY)));
+	PassengerLounge createPassengerLounge() {
+		return new PassengerLounge(createSeats(numberCreator.nextInt(MAX_CAPACITY)));
 	}
 
-	private Set<Seat> createSeats(int seatsCount) {
+	Set<Seat> createSeats(int seatsCount) {
 		Set<Seat> seats = new HashSet<>();
 		for (int i = 0; i < seatsCount; i++) {
 			seats.add(new Seat("" + i));
 		}
 		return seats;
+	}
+}
+
+class HelicopterCreator extends AircraftCreator{
+
+	@Override
+	public Aircraft create(int i) {
+		Helicopter helicopter = new Helicopter("HH" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT, numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
+				createFuelTank(), createPassengerLounge());
+		helicopter.setFuelConsumption(numberCreator.nextInt(MAX_CAPACITY)+1);
+		return helicopter;
+	}
+}
+
+class PlaneCreator extends AircraftCreator{
+
+	@Override
+	public Aircraft create(int i) {
+		Plane plane = new Plane("CC" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT, numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
+				createFuelTank(), createStorage());
+		plane.setFuelConsumption(numberCreator.nextInt(MAX_CAPACITY)+1);
+		return plane;
+	}
+}
+
+class PassengerPlaneCreator extends AircraftCreator{
+
+	@Override
+	public Aircraft create(int i) {
+		PassengerPlane plane = new PassengerPlane("PP" + i, numberCreator.nextInt(MAX_WEIGHT) + MIN_WEIGHT,numberCreator.nextInt(MAX_RANGE)+MIN_RANGE,
+				createFuelTank(), createStorage(), createPassengerLounge());
+		plane.setFuelConsumption(numberCreator.nextInt(MAX_CAPACITY)+1);
+		return plane;
 	}
 }
